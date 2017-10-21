@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+    <title>Easel Test</title>
+    <head>
+    <script src="https://code.createjs.com/easeljs-0.8.0.min.js"></script>
+
+    <script>
+        var stage;
+
+        function init() {
+            stage = new createjs.Stage("myCanvas");
+
+            var image = new Image();
+            image.src = "fireOff.jpg";
+            image.onload = handleImageLoad;
+        }
+
+        function handleImageLoad(event) {
+            var image = event.target;
+            var bitmap = new createjs.Bitmap(image);
+            stage.addChild(bitmap);
+            stage.update();
+        }
+
+
+    </script>
+
+    </head>
+    <body onload="init();">
+        <canvas id="myCanvas" width="960" height="580"></canvas>
+    </body>
+
+</html>

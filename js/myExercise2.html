@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>停車場規劃</title>
+  <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+  <script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+  <script
+  src="http://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript" language="javascript" src="mymodules/data.js"></script>
+  <style type="text/css" media="screen">
+  #testCanvas{
+    background-color: gray;
+  }
+  </style>
+  <script type="text/javascript">
+  $(document).ready(function(e) {
+    //        alert(jsonObject.start.count);
+    // var obj = JSON.parse(jsonObject);
+    for (var i=0;i<Object.keys(jsonObject).length;i++){
+      // console.log(jsonObject.start.count);
+      console.log(jsonObject[i].color);
+    }
+  });
+  var stage,loader,wScale,hScale,offsetX=11,offsetY=11;
+  var spaceNumber = 80;
+  var greenCarWidth,redCarWidth,spaceCarWidth,greenCarHeight,redCarHeight,spaceCarHeight;
+  var greenCar={};
+  var redCar={};
+  var spaceCar={};
+  var XY;
+  var car = new Array(spaceNumber);
+  //declare spaceNumber*4 array;
+
+  function init() {
+    preLoadImage();
+    var canvas = document.getElementById('demoCanvas');
+    wScale=(window.innerWidth-(offsetX*2));
+    hScale=(window.innerHeight-(offsetY*2));
+    canvas.width=wScale;
+    canvas.height=hScale;
+  }
+  function preLoadImage() {
+    // init();
+    var manifest = [
+      {src:"./img/greenCar.png", id:"greenCar"},
+      {src:"./img/redCar.png" , id:"redCar"},
+      {src:"./img/spaceCar.png" , id:"spaceCar"},
+      {src:"./img/B1F.png", id:"B1F"},
+      {src:"./img/B2F.png", id:"B2F"},
+      {src:"./img/B3F.png", id:"B3F"}
+    ]
+    loader = new createjs.LoadQueue(false);
+    loader.loadManifest(manifest);
+    loader.addEventListener("complete" , handleImageLoad);
+    console.log("preload");
+  }
+  function handleImageLoad(event){
+    console.log("start handleImageLoad"+event);
+    /////////
+    b3f = loader.getResult('B3F');
+    greenCar = loader.getResult('greenCar');
+    green = loader.getResult('greenCar');
+    redCar = loader.getResult('redCar');
+    spaceCar = loader.getResult('spaceCar');
+    // console.log('greenCar.Width:'+greenCar.width+';height:'+greenCar.height);
+    // console.log('redCar.Width:'+redCar.width+';height:'+redCar.height);
+    // console.log('spaceCar.Width:'+spaceCar.width+';height:'+spaceCar.height);
+
+    for (var i=0;i<spaceNumber;i++){
+      var Deep = 4;
+      car[i] = new Array(Deep);
+      car[i][0]=202+(i*67)%1139;
+      // car[i][1]=80+(i*220)%880;
+      switch (i%4) {
+        case 1: car[i][1]=330;
+        break;
+        case 2: car[i][1]=450;
+        break;
+        case 3: car[i][1]=720;
+        break;
+        default: car[i][1]=80;
+
+      }
+      car[i][2]= i%2 ? 0 : 2 ;
+      car[i][3]= jsonObject[i].color ;
+      // car[i][3]=greenCar;
+    }
+
+    ///////////
+    stage = new createjs.Stage("demoCanvas");
+    dispFloor(b3f);
+    for (var i=0;i<80;i++){
+      // dispCar(car[i][0],car[i][1],car[i][2],car[i][3]);
+      // greenCar = loader.getResult('greenCar');
+      dispCar(jsonObject[i].x,jsonObject[i].y,jsonObject[i].rotate,jsonObject[i].color=='greenCar'? greenCar:redCar);
+      dispXY(jsonObject[i].x,jsonObject[i].y,jsonObject[i].No,jsonObject[i].rotate);
+      // dispCar(jsonObject[i].x,jsonObject[i].y,jsonObject[i].rotete,car[i][3]);rotate
+        // console.log(car[i][3]);
+        greenCar = loader.getResult('greenCar');
+        console.log(typeof(jsonObject[i].color));
+
+    }
+    // for (var i=0;i<Object.keys(jsonObject).length;i++){
+    //   dispCar(jsonObject[i].x,jsonObject[i].y,jsonObject[i].rotate,jsonObject[i].color);
+    // }
+
+    // dispCar(202,80,2,greenCar);
+    // dispCar(260,80,2,greenCar);
+    // dispCar(320,80,2,greenCar)
+  //  dispCar(100,560,1,redCar)
+    stage.update(event);
+  }
+  function dispFloor(floor){
+    // var floor = loader.getResult(floor);
+    var floorBitmap = new createjs.Bitmap(floor);
+    floorBitmap.scaleX = (wScale/floor.width);
+    floorBitmap.scaleY = (hScale/floor.height);
+    floorBitmap.x = 0;//offsetX;
+    floorBitmap.y = 0;//offsetY;
+    stage.addChild(floorBitmap);
+  }
+
+  function dispCar(x,y,rotate,Car){
+    console.log('Car type:'+typeof(rotate)+',carHeight:'+Car.height+',carWidth:'+Car.width)
+    var carBitmap   = new createjs.Bitmap(Car);
+    if (rotate%2){
+      carBitmap.scaleX = hScale/(10*Car.height) ;
+      carBitmap.scaleY = wScale/(30*Car.width);
+    } else {
+      carBitmap.scaleX = wScale/(30*Car.width) ;
+      carBitmap.scaleY = hScale/(10*Car.height);
+    }
+    carBitmap.x=x*wScale/1600;
+    carBitmap.y=y*hScale/800;
+    carBitmap.regX=Car.width/2;
+    carBitmap.regY=Car.height/2;
+    carBitmap.rotation=(90*rotate);//Math.random()*360;//(Math.PI/3);
+    stage.addChild(carBitmap);
+  }
+  function dispXY(x,y,z,r){
+    // var floor = loader.getResult(floor);
+    // var XY = event.target;
+    XY = new createjs.Text(z+1, "14px Arial", "ffffff");
+    // XY.scaleX = (wScale/800);
+    // XY.scaleY = (hScale/800);
+    if (r == 1 ){
+      XY.x = x*wScale/1600-15;
+      XY.y = y*hScale/800-8;
+    } else if (r == 2){
+      XY.x = x*wScale/1600-8;
+      XY.y = y*hScale/800-16;
+    } else if (r == 3){
+      XY.x = x*wScale/1600;
+      XY.y = y*hScale/800-8;
+    } else {
+      XY.x = x*wScale/1600-7;
+      XY.y = y*hScale/800;
+    }
+    stage.addChild(XY);
+  }
+  // window.addEventListener('resize', init);
+  window.onresize = init;
+  </script>
+</head>
+<body onload = "init()">
+  <canvas id="demoCanvas" style="border-color:red;border-width:1px;border-style:solid;background-color:gray"></canvas>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <title>Canvas tutorial</title>
+    <script type="text/javascript">
+      window.onload = function(){
+        resizeCanvas();
+
+      }
+      function resizeCanvas(){
+        var carsX = new Array(50), carsY=new Array(50),carExist = new Array(50);
+        var canvas = document.getElementById('canvas');
+        canvas.width=window.innerWidth-18;
+        canvas.height=window.innerHeight-18;
+        for (var j=0;j<50;j++){
+          carsX[j]=j*canvas.width/24.5+canvas.width/6.8;
+          carsY[j]=canvas.height/6.5;
+          carExist[j]=0;
+          if (Math.random()>0.5){
+            carExist[j]=1;
+          }
+        }
+        if (canvas.getContext){
+          var ctx = canvas.getContext('2d');
+        }
+        if (canvas && canvas.getContext){
+          var ctx = canvas.getContext("2d");
+          var img = new Image();
+          img.src = "./img/b1f.png";
+          var greenCar = new Image();
+          greenCar.src='./img/greencar1.png';
+          var spaceCar = new Image();
+          spaceCar.src='./img/spaceCar.png';
+          // greenCar.rotate()
+          img.onload = function(event){
+            //ctx.drawImage(img, 600,800,3000,1800,0,0,canvas.width,canvas.height);
+            ctx.drawImage(img, 0,0,canvas.width,canvas.height);
+            for (var index=0;index<12;index++){
+              if (carExist[index] != 0){
+                ctx.setTransform(0,-1,-1,0,carsX[index],carsY[index]);
+                ctx.drawImage(greenCar,0,0,canvas.height/8,canvas.width/28);
+              }
+              else{
+                ctx.setTransform(0,-1,-1,0,carsX[index],carsY[index]);
+                ctx.drawImage(spaceCar,0,0,canvas.height/8,canvas.width/28);
+              }
+            }
+            ctx.setTransform(0,-1,-1,0,410,90);
+            //ctx.drawImage(greenCar,0,0,canvas.width/15,canvas.height/15);
+          }
+        }        //canvas.style.backgroundColor = "gray";
+        //canvas.styel.border='5';
+        //canvas.border-color = 'blue';
+      }
+      window.onresize = resizeCanvas;
+    </script>
+    <style type="text/css">
+    </style>
+  </head>
+  <body onload="resizeCanvas()">
+    <canvas id="canvas"style="border-color:red;border-width:1px;border-style:solid;" ></canvas>
+  </body>
+</html>
