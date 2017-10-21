@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+// test github
 /* 使用者刪除文章功能. */
 router.get('/delete/:id', function(req, res, next) {
   res.send("This is the delete function.");
