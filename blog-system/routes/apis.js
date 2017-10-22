@@ -3,7 +3,7 @@ var router = express.Router();
 
 //歐ee
 
-/* 使用者刪除文章功能.......... */
+/* 使用者刪除文章功能 */
 router.get('/delete/:id', function(req, res, next) {
   res.send("This is the delete function.");
 });
